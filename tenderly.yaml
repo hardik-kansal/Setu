@@ -1,0 +1,31 @@
+actions:
+  sleeping_hoodie/project:
+    runtime: v1
+    sources: actions
+    specs:
+      l1-to-l2:
+        description: "Relay Eth to Base"
+        function: relayer:handleBridge
+        trigger:
+          type: transaction
+          transaction:
+            network: 11155111
+            status: mined
+            filters:
+              - eventEmitted:
+                  contract:
+                    address: "0x010a712748b9903c90deec684f433bae57a67476"
+                  name: BridgeInitiated
+      l2-to-l1:
+        description: "Relay Base to Eth"
+        function: relayer:handleBridge
+        trigger:
+          type: transaction
+          transaction:
+            network: 84532
+            status: mined
+            filters:
+              - eventEmitted:
+                  contract:
+                    address: "0x8116cFd461C5AB410131Fd6925e6D394F0065Ee2"
+                  name: BridgeInitiated

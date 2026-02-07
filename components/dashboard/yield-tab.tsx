@@ -40,12 +40,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { arbitrumSepolia, sepolia } from "wagmi/chains";
+import { baseSepolia, sepolia } from "wagmi/chains";
 
 const LOCK_DAYS = [1, 3, 7] as const;
 
 const DEPOSIT_CHAINS = [
-  { id: arbitrumSepolia.id, name: "Arbitrum Sepolia" },
+  { id: baseSepolia.id, name: "Base Sepolia" },
   { id: sepolia.id, name: "Ethereum Sepolia" },
 ] as const;
 
@@ -63,7 +63,7 @@ export function YieldTab() {
   const [depositOpen, setDepositOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState("");
   const [selectedLockDays, setSelectedLockDays] = useState<number | null>(null);
-  const [selectedDepositChainId, setSelectedDepositChainId] = useState<number>(chainId ?? arbitrumSepolia.id);
+  const [selectedDepositChainId, setSelectedDepositChainId] = useState<number>(chainId ?? baseSepolia.id);
   const [pendingDeposit, setPendingDeposit] = useState<{ amount: string; days: number } | null>(null);
 
   useEffect(() => {

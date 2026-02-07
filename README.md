@@ -1,6 +1,6 @@
 # Setu — AI-Driven Cross-Chain Bridge Dashboard
 
-A high-end, glassmorphic DeFi dashboard for the Setu bridge on **Arbitrum Sepolia** and **Ethereum Sepolia**. Built with Next.js 15 (App Router), Tailwind CSS v4, shadcn/ui, Wagmi v2, RainbowKit, and Framer Motion.
+A high-end, glassmorphic DeFi dashboard for the Setu bridge on **Base Sepolia** and **Ethereum Sepolia**. Built with Next.js 15 (App Router), Tailwind CSS v4, shadcn/ui, Wagmi v2, RainbowKit, and Framer Motion.
 
 ## Features
 
@@ -38,7 +38,7 @@ A high-end, glassmorphic DeFi dashboard for the Setu bridge on **Arbitrum Sepoli
 
    Update `lib/contracts.ts` with your deployed `SetuVault` addresses for:
 
-   - Arbitrum Sepolia (chain ID `421614`)
+   - Base Sepolia (chain ID `84532`)
    - Ethereum Sepolia (chain ID `11155111`)
 
 4. **Run**
@@ -67,7 +67,7 @@ A high-end, glassmorphic DeFi dashboard for the Setu bridge on **Arbitrum Sepoli
 ├── hooks/
 │   └── use-setu-vault.ts    # Contract reads/writes (bridge, depositLP, withdrawLP, getUSDCValue, getTimeLeft, canWithdraw, userLock)
 ├── lib/
-│   ├── wagmi.ts         # RainbowKit getDefaultConfig (Arbitrum Sepolia + Ethereum Sepolia)
+│   ├── wagmi.ts         # RainbowKit getDefaultConfig (Base Sepolia + Ethereum Sepolia)
 │   ├── contracts.ts     # SetuVault ABI + addresses + USDC decimals
 │   └── utils.ts         # cn, formatUSDC, parseUSDC, formatTimeLeft
 └── contracts/
@@ -76,7 +76,8 @@ A high-end, glassmorphic DeFi dashboard for the Setu bridge on **Arbitrum Sepoli
 
 ## Networks
 
-- **Arbitrum Sepolia** — Chain ID `421614`
+- **Base Sepolia** — Chain ID `84532`
 - **Ethereum Sepolia** — Chain ID `11155111`
 
 Wagmi and RainbowKit are configured for these two chains with viem `http()` transports.
+

@@ -96,7 +96,7 @@ export function useBridge() {
   const { writeContractAsync, isPending, error } = useWriteContract();
 
   const bridge = async (amount: string) => {
-    if (!vaultAddress) throw new Error("Unsupported network. Switch to Arbitrum Sepolia or Ethereum Sepolia.");
+    if (!vaultAddress) throw new Error("Unsupported network. Switch to Base Sepolia or Ethereum Sepolia.");
     const amountWei = parseUnits(amount, USDC_DECIMALS);
     return writeContractAsync({
       address: vaultAddress,
@@ -114,7 +114,7 @@ export function useDepositLP() {
   const { writeContractAsync, isPending, error } = useWriteContract();
 
   const depositLP = async (amount: string, days: number) => {
-    if (!vaultAddress) throw new Error("Unsupported network. Switch to Arbitrum Sepolia or Ethereum Sepolia.");
+    if (!vaultAddress) throw new Error("Unsupported network. Switch to Base Sepolia or Ethereum Sepolia.");
     const amountWei = parseUnits(amount, USDC_DECIMALS);
     return writeContractAsync({
       address: vaultAddress,
@@ -132,7 +132,7 @@ export function useWithdrawLP() {
   const { writeContractAsync, isPending, error } = useWriteContract();
 
   const withdrawLP = async () => {
-    if (!vaultAddress) throw new Error("Unsupported network. Switch to Arbitrum Sepolia or Ethereum Sepolia.");
+    if (!vaultAddress) throw new Error("Unsupported network. Switch to Base Sepolia or Ethereum Sepolia.");
     return writeContractAsync({
       address: vaultAddress,
       abi: SETU_VAULT_ABI,

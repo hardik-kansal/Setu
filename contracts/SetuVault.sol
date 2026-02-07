@@ -2,20 +2,23 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-interface IPool {
-    function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode) external;
-    function withdraw(address asset, uint256 amount, address to) external returns (uint256);
+/**
+ * @dev Compound V3 (Comet) Interface
+ */
+interface IComet {
+    function supply(address asset, uint256 amount) external;
+    function withdraw(address asset, uint256 amount) external;
+    function balanceOf(address account) external view returns (uint256);
+    function baseToken() external view returns (address);
 }
 
 contract SetuVault is ERC20, Ownable, ReentrancyGuard {
+    IComet public comet;
     IERC20 public usdc;
-    IPool public aavePool;
-    address public aUsdc;
     address public tenderlyRelayer;
 
     struct Lock {
@@ -24,16 +27,13 @@ contract SetuVault is ERC20, Ownable, ReentrancyGuard {
     }
 
     mapping(address => Lock) public userLock;
-    mapping(uint256 => bool) public authorizedSourceChains;
-
     uint256 constant SECONDS_IN_DAY = 86400;
 
-    constructor(address _usdc, address _aavePool, address _aUsdc, address _relayer) 
+    constructor(address _comet, address _relayer) 
         ERC20("Setu LP Token", "zLP") Ownable(msg.sender) 
     {
-        usdc = IERC20(_usdc);
-        aavePool = IPool(_aavePool);
-        aUsdc = _aUsdc;
+        comet = IComet(_comet);
+        usdc = IERC20(comet.baseToken()); // Automatically fetch USDC from Comet
         tenderlyRelayer = _relayer;
     }
 
@@ -41,7 +41,7 @@ contract SetuVault is ERC20, Ownable, ReentrancyGuard {
 
     function bridge(uint256 _amount) external nonReentrant {
         usdc.transferFrom(msg.sender, address(this), _amount);
-        _supplyToAave(_amount);
+        _supplyToCompound(_amount);
         emit BridgeInitiated(msg.sender, _amount, block.chainid);
     }
 
@@ -58,7 +58,7 @@ contract SetuVault is ERC20, Ownable, ReentrancyGuard {
         userLock[msg.sender].unlockTime = newUnlockTime;
 
         usdc.transferFrom(msg.sender, address(this), _amount);
-        _supplyToAave(_amount);
+        _supplyToCompound(_amount);
         _mint(msg.sender, shares);
     }
 
@@ -74,63 +74,53 @@ contract SetuVault is ERC20, Ownable, ReentrancyGuard {
         lock.unlockTime = 0;
         
         _burn(msg.sender, sharesToBurn);
-        aavePool.withdraw(address(usdc), amountToReturn, msg.sender);
+        
+        // Compound V3 withdraw sends tokens to THIS contract
+        comet.withdraw(address(usdc), amountToReturn);
+        usdc.transfer(msg.sender, amountToReturn);
     }
 
-    // --- FRONTEND HELPER FUNCTIONS ---
+    // --- FRONTEND HELPERS ---
 
-    /**
-     * @notice Returns the total USDC controlled by this contract (Principal + Yield).
-     */
     function totalAssets() public view returns (uint256) {
-        return IERC20(aUsdc).balanceOf(address(this));
+        // Compound V3 balanceOf(address) returns principal + accrued interest
+        return comet.balanceOf(address(this));
     }
 
-    /**
-     * @notice Returns the current value of a user's LP shares in USDC.
-     * Use this to show: "Your current balance is $105.20"
-     */
     function getUSDCValue(address _user) public view returns (uint256) {
         if (totalSupply() == 0) return 0;
         return (userLock[_user].lpAmount * totalAssets()) / totalSupply();
-    }
-
-    /**
-     * @notice Returns the timestamp of the user's midnight unlock.
-     * Use this for: "Unlocks on July 26, 2026 at 00:00 UTC"
-     */
-    function getUnlockTimestamp(address _user) external view returns (uint256) {
-        return userLock[_user].unlockTime;
-    }
-
-    /**
-     * @notice Returns the number of seconds remaining until the user can withdraw.
-     * Use this for a real-time countdown timer in React.
-     */
-    function getTimeLeft(address _user) external view returns (uint256) {
-        if (block.timestamp >= userLock[_user].unlockTime) return 0;
-        return userLock[_user].unlockTime - block.timestamp;
-    }
-
-    /**
-     * @notice Helper to check if the user is currently allowed to withdraw.
-     * Use this to enable/disable the "Withdraw" button.
-     */
-    function canWithdraw(address _user) external view returns (bool) {
-        return (userLock[_user].lpAmount > 0 && block.timestamp >= userLock[_user].unlockTime);
     }
 
     // --- System Functions ---
 
     function unlock(address _user, uint256 _amount, uint256 _src) external {
         require(msg.sender == tenderlyRelayer, "Unauthorized");
-        aavePool.withdraw(address(usdc), _amount, _user);
+        comet.withdraw(address(usdc), _amount);
+        usdc.transfer(_user, _amount);
     }
 
-    function _supplyToAave(uint256 _amount) internal {
-        usdc.approve(address(aavePool), _amount);
-        aavePool.supply(address(usdc), _amount, address(this), 0);
+    function _supplyToCompound(uint256 _amount) internal {
+        usdc.approve(address(comet), _amount);
+        comet.supply(address(usdc), _amount);
     }
 
     event BridgeInitiated(address indexed user, uint256 amount, uint256 sourceChainId);
 }
+
+// base-sepolia
+
+
+// 0x8116cFd461C5AB410131Fd6925e6D394F0065Ee2
+
+// comet - 0x571621Ce60Cebb0c1D442B5afb38B1663C6Bf017
+
+// relayer - 0x4f4Ed8D7DE8590ED7597b8099a474E243EFC0C94
+
+
+
+// eth - sepolia
+
+// 0x4f4Ed8D7DE8590ED7597b8099a474E243EFC0C94
+// comet - 0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e
+

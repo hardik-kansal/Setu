@@ -28,7 +28,7 @@ export default function Home() {
                 Dashboard
               </h1>
               <p className="mt-1 text-muted-foreground">
-                Bridge USDC and manage LP positions on Arbitrum Sepolia & Ethereum Sepolia.
+                Bridge USDC and manage LP positions on Base Sepolia & Ethereum Sepolia.
               </p>
             </motion.div>
 

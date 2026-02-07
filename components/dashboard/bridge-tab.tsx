@@ -17,10 +17,10 @@ import {
 import { useBridge, useUSDCBalance } from "@/hooks/use-setu-vault";
 import { useAccount, useSwitchChain, useChainId } from "wagmi";
 import { formatUSDC } from "@/lib/utils";
-import { arbitrumSepolia, sepolia } from "wagmi/chains";
+import { baseSepolia, sepolia } from "wagmi/chains";
 
 const CHAINS = [
-  { id: arbitrumSepolia.id, name: "Arbitrum Sepolia" },
+  { id: baseSepolia.id, name: "Base Sepolia" },
   { id: sepolia.id, name: "Ethereum Sepolia" },
 ] as const;
 
@@ -36,7 +36,7 @@ export function BridgeTab() {
   const { switchChainAsync } = useSwitchChain();
   const { bridge, isPending } = useBridge();
 
-  const [fromChainId, setFromChainId] = useState<number>(chainId ?? arbitrumSepolia.id);
+  const [fromChainId, setFromChainId] = useState<number>(chainId ?? baseSepolia.id);
   const [toChainId, setToChainId] = useState<number>(sepolia.id);
   const [fromToken, setFromToken] = useState<string>("usdc");
   const [toToken, setToToken] = useState<string>("usdc");

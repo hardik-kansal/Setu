@@ -12,7 +12,7 @@ const MOCK_LOGS = [
   "[Setu Manager] Cross-chain state synced.",
   "[Setu Manager] LP position health check passed.",
   "[Setu Manager] Yield accrual updated.",
-  "[Setu Manager] Monitoring Arbitrum Sepolia → Ethereum Sepolia.",
+  "[Setu Manager] Monitoring Base Sepolia → Ethereum Sepolia.",
   "[Setu Manager] No pending rebalance required.",
   "[Setu Manager] Aave supply balance verified.",
   "[Setu Manager] Ready for next bridge request.",

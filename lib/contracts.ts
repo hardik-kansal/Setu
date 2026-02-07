@@ -3,7 +3,7 @@
  * Replace with your deployed contract addresses.
  */
 export const SETU_VAULT_ADDRESSES = {
-  421614: "0x0000000000000000000000000000000000000000" as `0x${string}`, // Arbitrum Sepolia
+  84532: "0x0000000000000000000000000000000000000000" as `0x${string}`, // Base Sepolia
   11155111: "0x0000000000000000000000000000000000000000" as `0x${string}`, // Ethereum Sepolia
 } as const;
 
@@ -12,7 +12,7 @@ export const SETU_VAULT_ADDRESSES = {
  * Update if using different testnet USDC.
  */
 export const USDC_ADDRESSES: Record<number, `0x${string}`> = {
-  421614: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d" as `0x${string}`, // Arbitrum Sepolia
+  84532: "0x036CbD53842c5426634e7929541eC2318f3dCF7e" as `0x${string}`, // Base Sepolia (USDC)
   11155111: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238" as `0x${string}`, // Ethereum Sepolia
 };
 

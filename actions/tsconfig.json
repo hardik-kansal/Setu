@@ -8,10 +8,14 @@
         "rootDir": "",
         "sourceMap": true,
         "strict": true,
-        "target": "es2020"
+        "target": "es2020",
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node"
     },
     "exclude": [
-        "**/*.spec.ts"
+        "**/*.spec.ts",
+        "node_modules"
     ],
     "include": [
         "**/*"
