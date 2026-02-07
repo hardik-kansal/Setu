@@ -1,0 +1,17 @@
+account_id: ""
+actions:
+  sleeping_hoodie/project:
+    runtime: v2
+    sources: actions
+    specs:
+      example:
+        description: This is just an example, but you can publish this action.
+        function: example:blockHelloWorldFn
+        trigger:
+          type: block
+          block:
+            blocks: 10
+            network:
+            - 1
+        execution_type: parallel
+project_slug: ""

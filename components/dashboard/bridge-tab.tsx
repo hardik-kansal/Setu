@@ -14,13 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useBridge } from "@/hooks/use-setu-vault";
+import { useBridge, useUSDCBalance } from "@/hooks/use-setu-vault";
 import { useAccount, useSwitchChain, useChainId } from "wagmi";
-import { arbitrumSepolia, polygonAmoy } from "wagmi/chains";
+import { formatUSDC } from "@/lib/utils";
+import { arbitrumSepolia, sepolia } from "wagmi/chains";
 
 const CHAINS = [
   { id: arbitrumSepolia.id, name: "Arbitrum Sepolia" },
-  { id: polygonAmoy.id, name: "Polygon Amoy" },
+  { id: sepolia.id, name: "Ethereum Sepolia" },
 ] as const;
 
 const TOKENS = [{ id: "usdc", symbol: "USDC" }] as const;
@@ -36,11 +37,14 @@ export function BridgeTab() {
   const { bridge, isPending } = useBridge();
 
   const [fromChainId, setFromChainId] = useState<number>(chainId ?? arbitrumSepolia.id);
-  const [toChainId, setToChainId] = useState<number>(polygonAmoy.id);
+  const [toChainId, setToChainId] = useState<number>(sepolia.id);
   const [fromToken, setFromToken] = useState<string>("usdc");
   const [toToken, setToToken] = useState<string>("usdc");
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
+
+  const { balance: fromBalance } = useUSDCBalance(fromChainId);
+  const { balance: toBalance } = useUSDCBalance(toChainId);
 
   useEffect(() => {
     if (chainId && CHAINS.some((c) => c.id === chainId)) {
@@ -187,7 +191,7 @@ export function BridgeTab() {
                 </Select>
               </div>
               <p className="mt-2 text-right text-xs text-muted-foreground">
-                Bal: 0
+                Bal: {address ? formatUSDC(fromBalance) : "—"}
               </p>
             </div>
 
@@ -255,7 +259,7 @@ export function BridgeTab() {
                 </Select>
               </div>
               <p className="mt-2 text-right text-xs text-muted-foreground">
-                Bal: 0
+                Bal: {address ? formatUSDC(toBalance) : "—"}
               </p>
             </div>
           </CardContent>

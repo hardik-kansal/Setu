@@ -4,10 +4,30 @@
  */
 export const SETU_VAULT_ADDRESSES = {
   421614: "0x0000000000000000000000000000000000000000" as `0x${string}`, // Arbitrum Sepolia
-  80002: "0x0000000000000000000000000000000000000000" as `0x${string}`, // Polygon Amoy
+  11155111: "0x0000000000000000000000000000000000000000" as `0x${string}`, // Ethereum Sepolia
 } as const;
 
+/**
+ * USDC token addresses per chain (for balance display).
+ * Update if using different testnet USDC.
+ */
+export const USDC_ADDRESSES: Record<number, `0x${string}`> = {
+  421614: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d" as `0x${string}`, // Arbitrum Sepolia
+  11155111: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238" as `0x${string}`, // Ethereum Sepolia
+};
+
 export const USDC_DECIMALS = 6;
+
+/** Minimal ERC20 ABI for balanceOf */
+export const ERC20_BALANCE_ABI = [
+  {
+    inputs: [{ name: "account", type: "address" }],
+    name: "balanceOf",
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+] as const;
 
 export const SETU_VAULT_ABI = [
   {

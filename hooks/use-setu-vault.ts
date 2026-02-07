@@ -5,12 +5,30 @@ import { parseUnits } from "viem";
 import {
   SETU_VAULT_ABI,
   SETU_VAULT_ADDRESSES,
+  USDC_ADDRESSES,
+  ERC20_BALANCE_ABI,
   USDC_DECIMALS,
 } from "@/lib/contracts";
 
 export function useSetuVaultAddress() {
   const chainId = useChainId();
   return (SETU_VAULT_ADDRESSES as Record<number, `0x${string}`>)[chainId];
+}
+
+/** USDC balance for the connected wallet on a specific chain (for Bridge tab). */
+export function useUSDCBalance(chainId: number) {
+  const { address } = useAccount();
+  const usdcAddress = USDC_ADDRESSES[chainId];
+
+  const { data, refetch } = useReadContract({
+    address: usdcAddress,
+    abi: ERC20_BALANCE_ABI,
+    functionName: "balanceOf",
+    args: address ? [address] : undefined,
+    chainId,
+  });
+
+  return { balance: data ?? 0n, refetch };
 }
 
 export function useUserLock() {
@@ -78,7 +96,7 @@ export function useBridge() {
   const { writeContractAsync, isPending, error } = useWriteContract();
 
   const bridge = async (amount: string) => {
-    if (!vaultAddress) throw new Error("Unsupported network. Switch to Arbitrum Sepolia or Polygon Amoy.");
+    if (!vaultAddress) throw new Error("Unsupported network. Switch to Arbitrum Sepolia or Ethereum Sepolia.");
     const amountWei = parseUnits(amount, USDC_DECIMALS);
     return writeContractAsync({
       address: vaultAddress,
@@ -96,7 +114,7 @@ export function useDepositLP() {
   const { writeContractAsync, isPending, error } = useWriteContract();
 
   const depositLP = async (amount: string, days: number) => {
-    if (!vaultAddress) throw new Error("Unsupported network. Switch to Arbitrum Sepolia or Polygon Amoy.");
+    if (!vaultAddress) throw new Error("Unsupported network. Switch to Arbitrum Sepolia or Ethereum Sepolia.");
     const amountWei = parseUnits(amount, USDC_DECIMALS);
     return writeContractAsync({
       address: vaultAddress,
@@ -114,7 +132,7 @@ export function useWithdrawLP() {
   const { writeContractAsync, isPending, error } = useWriteContract();
 
   const withdrawLP = async () => {
-    if (!vaultAddress) throw new Error("Unsupported network. Switch to Arbitrum Sepolia or Polygon Amoy.");
+    if (!vaultAddress) throw new Error("Unsupported network. Switch to Arbitrum Sepolia or Ethereum Sepolia.");
     return writeContractAsync({
       address: vaultAddress,
       abi: SETU_VAULT_ABI,

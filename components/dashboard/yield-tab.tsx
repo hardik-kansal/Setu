@@ -30,14 +30,29 @@ import {
   useDepositLP,
   useWithdrawLP,
 } from "@/hooks/use-setu-vault";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId, useSwitchChain } from "wagmi";
 import { formatUSDC, formatTimeLeft } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { arbitrumSepolia, sepolia } from "wagmi/chains";
 
 const LOCK_DAYS = [1, 3, 7] as const;
 
+const DEPOSIT_CHAINS = [
+  { id: arbitrumSepolia.id, name: "Arbitrum Sepolia" },
+  { id: sepolia.id, name: "Ethereum Sepolia" },
+] as const;
+
 export function YieldTab() {
+  const chainId = useChainId();
   const { address } = useAccount();
+  const { switchChainAsync } = useSwitchChain();
   const { lpAmount, unlockTime, refetch: refetchLock } = useUserLock();
   const { value: usdcValue, refetch: refetchValue } = useGetUSDCValue();
   const { timeLeft, refetch: refetchTime } = useGetTimeLeft();
@@ -48,12 +63,47 @@ export function YieldTab() {
   const [depositOpen, setDepositOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState("");
   const [selectedLockDays, setSelectedLockDays] = useState<number | null>(null);
+  const [selectedDepositChainId, setSelectedDepositChainId] = useState<number>(chainId ?? arbitrumSepolia.id);
+  const [pendingDeposit, setPendingDeposit] = useState<{ amount: string; days: number } | null>(null);
 
   useEffect(() => {
     if (!address) return;
     const interval = setInterval(refetchTime, 1000);
     return () => clearInterval(interval);
   }, [address, refetchTime]);
+
+  useEffect(() => {
+    if (depositOpen && chainId) {
+      setSelectedDepositChainId(chainId);
+    }
+  }, [depositOpen, chainId]);
+
+  // After chain switch, run the pending deposit (so vault address is for the new chain)
+  useEffect(() => {
+    if (!pendingDeposit || chainId !== selectedDepositChainId || !address) return;
+    const { amount, days } = pendingDeposit;
+    setPendingDeposit(null);
+    toast.loading("Transaction Pending...", { id: "deposit-pending" });
+    depositLP(amount, days)
+      .then(() => {
+        toast.dismiss("deposit-pending");
+        toast.success("Deposit successful", { id: "deposit-success" });
+        setDepositOpen(false);
+        setDepositAmount("");
+        setSelectedLockDays(null);
+        refetchLock();
+        refetchValue();
+        refetchTime();
+        refetchCan();
+      })
+      .catch((e) => {
+        toast.dismiss("deposit-pending");
+        toast.error("Deposit failed", {
+          description: e instanceof Error ? e.message : "Transaction reverted",
+          id: "deposit-error",
+        });
+      });
+  }, [pendingDeposit, chainId, selectedDepositChainId, address]);
 
   const handleDeposit = async () => {
     if (!address) {
@@ -67,6 +117,16 @@ export function YieldTab() {
     const num = parseFloat(depositAmount);
     if (!depositAmount || isNaN(num) || num <= 0) {
       toast.error("Enter a valid USDC amount");
+      return;
+    }
+
+    if (chainId !== selectedDepositChainId) {
+      try {
+        await switchChainAsync?.({ chainId: selectedDepositChainId });
+        setPendingDeposit({ amount: depositAmount, days: selectedLockDays });
+      } catch (e) {
+        toast.error("Switch to the selected network first");
+      }
       return;
     }
 
@@ -202,6 +262,26 @@ export function YieldTab() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-muted-foreground">
+                Chain
+              </label>
+              <Select
+                value={String(selectedDepositChainId)}
+                onValueChange={(v) => setSelectedDepositChainId(Number(v))}
+              >
+                <SelectTrigger className="w-full border-border bg-background/50">
+                  <SelectValue placeholder="Select chain" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DEPOSIT_CHAINS.map((c) => (
+                    <SelectItem key={c.id} value={String(c.id)}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-muted-foreground">
                 Amount (USDC)

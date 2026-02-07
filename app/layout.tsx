@@ -5,7 +5,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Setu | AI-Driven Cross-Chain Bridge",
-  description: "Bridge USDC and earn yield with Setu on Arbitrum Sepolia & Polygon Amoy",
+  description: "Bridge USDC and earn yield with Setu on Arbitrum Sepolia & Ethereum Sepolia",
 };
 
 export default function RootLayout({

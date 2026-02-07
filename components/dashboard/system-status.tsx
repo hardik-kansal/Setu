@@ -8,11 +8,11 @@ import { cn } from "@/lib/utils";
 const MOCK_LOGS = [
   "[Setu Manager] Detecting bridge intent...",
   "[Setu Manager] Optimizing rebalance path...",
-  "[Setu Manager] Unlocking funds on Polygon Amoy...",
+  "[Setu Manager] Unlocking funds on Ethereum Sepolia...",
   "[Setu Manager] Cross-chain state synced.",
   "[Setu Manager] LP position health check passed.",
   "[Setu Manager] Yield accrual updated.",
-  "[Setu Manager] Monitoring Arbitrum Sepolia → Polygon Amoy.",
+  "[Setu Manager] Monitoring Arbitrum Sepolia → Ethereum Sepolia.",
   "[Setu Manager] No pending rebalance required.",
   "[Setu Manager] Aave supply balance verified.",
   "[Setu Manager] Ready for next bridge request.",
