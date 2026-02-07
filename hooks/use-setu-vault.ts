@@ -20,15 +20,15 @@ export function useUSDCBalance(chainId: number) {
   const { address } = useAccount();
   const usdcAddress = USDC_ADDRESSES[chainId];
 
-  const { data, refetch } = useReadContract({
-    address: usdcAddress,
+  const { data, refetch, isError, isLoading } = useReadContract({
+    address: usdcAddress ?? undefined,
     abi: ERC20_BALANCE_ABI,
     functionName: "balanceOf",
     args: address ? [address] : undefined,
     chainId,
   });
 
-  return { balance: data ?? 0n, refetch };
+  return { balance: data ?? 0n, refetch, isError, isLoading };
 }
 
 export function useUserLock() {

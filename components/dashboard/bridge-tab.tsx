@@ -43,8 +43,8 @@ export function BridgeTab() {
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
 
-  const { balance: fromBalance } = useUSDCBalance(fromChainId);
-  const { balance: toBalance } = useUSDCBalance(toChainId);
+  const { balance: fromBalance, isError: fromBalanceError, isLoading: fromBalanceLoading } = useUSDCBalance(fromChainId);
+  const { balance: toBalance, isError: toBalanceError, isLoading: toBalanceLoading } = useUSDCBalance(toChainId);
 
   useEffect(() => {
     if (chainId && CHAINS.some((c) => c.id === chainId)) {
@@ -191,7 +191,7 @@ export function BridgeTab() {
                 </Select>
               </div>
               <p className="mt-2 text-right text-xs text-muted-foreground">
-                Bal: {address ? formatUSDC(fromBalance) : "—"}
+                Bal: {!address ? "—" : fromBalanceLoading ? "..." : fromBalanceError ? "—" : formatUSDC(fromBalance)}
               </p>
             </div>
 
@@ -259,7 +259,7 @@ export function BridgeTab() {
                 </Select>
               </div>
               <p className="mt-2 text-right text-xs text-muted-foreground">
-                Bal: {address ? formatUSDC(toBalance) : "—"}
+                Bal: {!address ? "—" : toBalanceLoading ? "..." : toBalanceError ? "—" : formatUSDC(toBalance)}
               </p>
             </div>
           </CardContent>
