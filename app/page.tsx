@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/dashboard/header";
 import { BridgeTab } from "@/components/dashboard/bridge-tab";
 import { YieldTab } from "@/components/dashboard/yield-tab";
-import { SystemStatus } from "@/components/dashboard/system-status";
 import { RebalancerDashboard } from "@/components/dashboard/rebalancer-dashboard";
+import { SystemArchitecture } from "@/components/dashboard/system-architecture";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowRightLeft, TrendingUp, Bot } from "lucide-react";
+import { ArrowRightLeft, TrendingUp, Bot, Building2 } from "lucide-react";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("bridge");
@@ -17,7 +17,7 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-8 lg:flex-row">
+        <div className="flex flex-col gap-8">
           <div className="flex-1 min-w-0">
             <motion.div
               initial={{ opacity: 0 }}
@@ -38,7 +38,7 @@ export default function Home() {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="glass mb-6 inline-flex h-12 w-full max-w-2xl p-1 bg-muted/50 border border-indigo-500/20">
+              <TabsList className="glass mb-6 inline-flex h-12 w-full max-w-3xl p-1 bg-muted/50 border border-indigo-500/20">
                 <TabsTrigger
                   value="bridge"
                   className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg px-6"
@@ -60,6 +60,13 @@ export default function Home() {
                   <Bot className="mr-2 h-4 w-4" />
                   AI Rebalancer
                 </TabsTrigger>
+                <TabsTrigger
+                  value="architecture"
+                  className="data-[state=active]:bg-slate-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg px-6"
+                >
+                  <Building2 className="mr-2 h-4 w-4" />
+                  Architecture
+                </TabsTrigger>
               </TabsList>
 
               <AnimatePresence mode="wait">
@@ -72,22 +79,12 @@ export default function Home() {
                 <TabsContent value="rebalancer" className="mt-0">
                   <RebalancerDashboard />
                 </TabsContent>
+                <TabsContent value="architecture" className="mt-0">
+                  <SystemArchitecture />
+                </TabsContent>
               </AnimatePresence>
             </Tabs>
           </div>
-
-          {activeTab !== "rebalancer" && (
-            <aside className="w-full lg:w-[340px] shrink-0">
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-                className="lg:sticky lg:top-24"
-              >
-                <SystemStatus />
-              </motion.div>
-            </aside>
-          )}
         </div>
       </main>
     </div>
