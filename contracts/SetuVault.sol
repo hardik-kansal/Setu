@@ -121,6 +121,6 @@ contract SetuVault is ERC20, Ownable, ReentrancyGuard {
 
 // eth - sepolia
 
-// 0x4f4Ed8D7DE8590ED7597b8099a474E243EFC0C94
+// 0x010a712748b9903c90deec684f433bae57a67476
 // comet - 0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e
 

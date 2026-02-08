@@ -1,0 +1,3 @@
+# Ignore tsc output
+out/**/*
+# Don't ignore node_modules - Tenderly needs them
