@@ -19,7 +19,7 @@ export function SystemArchitecture() {
       </div>
 
       {/* Contract Addresses */}
-      <Card className="bg-gradient-to-br from-slate-950/50 to-slate-900/50 border-slate-700/30">
+      <Card>
         <CardHeader>
           <CardTitle className="text-2xl">📝 Smart Contract Addresses</CardTitle>
         </CardHeader>
@@ -31,7 +31,7 @@ export function SystemArchitecture() {
                   <div className="h-3 w-3 rounded-full bg-emerald-400 animate-pulse" />
                   <span className="text-lg font-medium text-emerald-400">Ethereum Sepolia (L1)</span>
                 </div>
-                <code className="text-sm bg-black/50 px-4 py-3 rounded block break-all">
+                <code className="text-sm bg-muted px-4 py-3 rounded block break-all">
                   0x010a712748b9903c90deec684f433bae57a67476
                 </code>
                 <a 
@@ -51,7 +51,7 @@ export function SystemArchitecture() {
                   <div className="h-3 w-3 rounded-full bg-blue-400 animate-pulse" />
                   <span className="text-lg font-medium text-blue-400">Base Sepolia (L2)</span>
                 </div>
-                <code className="text-sm bg-black/50 px-4 py-3 rounded block break-all">
+                <code className="text-sm bg-muted px-4 py-3 rounded block break-all">
                   0x8116cFd461C5AB410131Fd6925e6D394F0065Ee2
                 </code>
                 <a 
@@ -69,7 +69,7 @@ export function SystemArchitecture() {
       </Card>
 
       {/* Technical Architecture */}
-      <Card className="bg-gradient-to-br from-slate-950/50 to-slate-900/50 border-slate-700/30">
+      <Card>
         <CardHeader>
           <CardTitle className="text-2xl">⚙️ Technical Components</CardTitle>
         </CardHeader>
@@ -84,7 +84,7 @@ export function SystemArchitecture() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-indigo-400 mt-1">•</span>
-                  <span>Key: <code className="text-xs bg-black/30 px-2 py-1 rounded">org.setu.ai_params</code></span>
+                  <span>Key: <code className="text-xs bg-muted px-2 py-1 rounded">org.setu.ai_params</code></span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-indigo-400 mt-1">•</span>
@@ -98,7 +98,7 @@ export function SystemArchitecture() {
             </div>
 
             <div className="p-6 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
-              <h3 className="font-semibold text-lg text-emerald-400 mb-4">2. ElizaOS AI Agent</h3>
+              <h3 className="font-semibold text-lg text-emerald-400 mb-4">2. Setu Agent</h3>
               <ul className="text-sm text-muted-foreground space-y-3">
                 <li className="flex items-start gap-2">
                   <span className="text-emerald-400 mt-1">•</span>
@@ -145,7 +145,7 @@ export function SystemArchitecture() {
       </Card>
 
       {/* Rebalancing Workflow */}
-      <Card className="bg-gradient-to-br from-slate-950/50 to-slate-900/50 border-slate-700/30">
+      <Card>
         <CardHeader>
           <CardTitle className="text-2xl">⚡ Rebalancing Workflow</CardTitle>
         </CardHeader>
@@ -171,7 +171,7 @@ export function SystemArchitecture() {
               <div className="flex-1">
                 <h4 className="font-semibold text-lg mb-2">AI Analysis</h4>
                 <p className="text-muted-foreground">
-                  ElizaOS analyzes system state using ENS governance parameters and calculates optimal rebalance amount. 
+                  Setu Agent analyzes system state using ENS governance parameters and calculates optimal rebalance amount. 
                   Considers gas costs, bridge fees, and time to execution.
                 </p>
               </div>
@@ -208,7 +208,7 @@ export function SystemArchitecture() {
 
       {/* Key Benefits */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="bg-gradient-to-br from-slate-950/50 to-slate-900/50 border-slate-700/30">
+        <Card>
           <CardHeader>
             <CardTitle className="text-xl">✨ Innovation Highlights</CardTitle>
           </CardHeader>
@@ -228,7 +228,7 @@ export function SystemArchitecture() {
                 <div>
                   <span className="font-medium">Autonomous AI decision-making</span>
                   <p className="text-sm text-muted-foreground mt-1">
-                    ElizaOS adapts to market conditions without human intervention
+                    Setu Agent adapts to market conditions without human intervention
                   </p>
                 </div>
               </li>
@@ -254,7 +254,7 @@ export function SystemArchitecture() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-slate-950/50 to-slate-900/50 border-slate-700/30">
+        <Card>
           <CardHeader>
             <CardTitle className="text-xl">🎯 Business Benefits</CardTitle>
           </CardHeader>
@@ -302,7 +302,7 @@ export function SystemArchitecture() {
       </div>
 
       {/* Technology Stack */}
-      <Card className="bg-gradient-to-br from-slate-950/50 to-slate-900/50 border-slate-700/30">
+      <Card>
         <CardHeader>
           <CardTitle className="text-2xl">🛠️ Technology Stack</CardTitle>
         </CardHeader>
@@ -332,7 +332,7 @@ export function SystemArchitecture() {
               <ul className="text-sm text-muted-foreground space-y-2">
                 <li>• ENS (Configuration)</li>
                 <li>• LI.FI SDK (Bridging)</li>
-                <li>• ElizaOS (AI Agent)</li>
+                <li>• Setu Agent (AI)</li>
                 <li>• Supabase (Analytics)</li>
               </ul>
             </div>

@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useEnsText } from 'wagmi';
+import { useEnsText, useAccount, useEnsName } from 'wagmi';
 import { normalize } from 'viem/ens';
-import { RefreshCw, Settings, CheckCircle2, AlertCircle } from 'lucide-react';
+import { RefreshCw, Settings, CheckCircle2, AlertCircle, Wallet } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { sepolia } from 'wagmi/chains';
 
@@ -16,19 +16,26 @@ interface AIParams {
   relay_fee: number;
 }
 
-interface ENSConfigResolverProps {
-  ensName?: string;
-}
-
-export function ENSConfigResolver({ ensName = 'setu-vault.eth' }: ENSConfigResolverProps) {
+export function ENSConfigResolver() {
   const [parsedConfig, setParsedConfig] = useState<AIParams | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
+  
+  const { address, isConnected } = useAccount();
+  
+  // Get ENS name for the connected address
+  const { data: ensName, isLoading: isLoadingEns } = useEnsName({
+    address: address,
+    chainId: sepolia.id,
+  });
 
-  // Fetch ENS text record
-  const { data: configData, isLoading, isError, refetch } = useEnsText({
-    name: normalize(ensName),
+  // Fetch ENS text record only if user has an ENS name
+  const { data: configData, isLoading: isLoadingConfig, isError, refetch } = useEnsText({
+    name: ensName ? normalize(ensName) : undefined,
     key: 'org.setu.ai_params',
     chainId: sepolia.id,
+    query: {
+      enabled: !!ensName,
+    },
   });
 
   useEffect(() => {
@@ -41,15 +48,10 @@ export function ENSConfigResolver({ ensName = 'setu-vault.eth' }: ENSConfigResol
         setParseError('Invalid JSON in ENS record');
         setParsedConfig(null);
       }
-    } else if (!isLoading && !configData) {
-      // Mock data for demo when ENS record not set
-      setParsedConfig({
-        threshold: 1000,
-        strategy: 'yield_max',
-        relay_fee: 0.005,
-      });
+    } else {
+      setParsedConfig(null);
     }
-  }, [configData, isLoading]);
+  }, [configData]);
 
   const getStrategyColor = (strategy: string) => {
     switch (strategy) {
@@ -68,6 +70,121 @@ export function ENSConfigResolver({ ensName = 'setu-vault.eth' }: ENSConfigResol
       default: return 'Custom strategy';
     }
   };
+
+  const isLoading = isLoadingEns || isLoadingConfig;
+
+  // Show wallet connection prompt if not connected
+  if (!isConnected) {
+    return (
+      <Card className="bg-white border-slate-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Settings className="h-5 w-5 text-indigo-600" />
+            <span>Decentralized Settings</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <Wallet className="h-12 w-12 text-slate-400 mb-4" />
+            <h3 className="font-semibold text-lg mb-2">Connect Your Wallet</h3>
+            <p className="text-sm text-muted-foreground">
+              Please connect your wallet to view your ENS configuration
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Show ENS setup prompt if user doesn't have an ENS name
+  if (!isLoadingEns && !ensName) {
+    return (
+      <Card className="bg-white border-slate-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Settings className="h-5 w-5 text-indigo-600" />
+            <span>Decentralized Settings</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <AlertCircle className="h-12 w-12 text-yellow-500 mb-4" />
+            <h3 className="font-semibold text-lg mb-2">No ENS Name Found</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Your wallet address doesn't have an ENS name configured on Sepolia.
+            </p>
+            <div className="text-xs text-slate-600 bg-slate-50 p-4 rounded-lg border border-slate-200 max-w-md">
+              <p className="font-semibold mb-2">To use ENS configuration:</p>
+              <ol className="text-left space-y-1 list-decimal list-inside">
+                <li>Register an ENS name on Sepolia</li>
+                <li>Set the text record key: <code className="text-xs bg-slate-200 px-1 rounded">org.setu.ai_params</code></li>
+                <li>Add your configuration in JSON format</li>
+                <li>Refresh this page</li>
+              </ol>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Show configuration not set prompt
+  if (!isLoading && ensName && !configData && !isError) {
+    return (
+      <Card className="bg-white border-slate-200">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Settings className="h-5 w-5 text-indigo-600" />
+              <span>Decentralized Settings</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => refetch()}
+              className="h-8 w-8 p-0"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">ENS Name:</span>
+            <code className="text-indigo-600 font-mono bg-slate-100 px-2 py-1 rounded border border-slate-200">
+              {ensName}
+            </code>
+            <CheckCircle2 className="h-4 w-4 text-green-500" />
+          </div>
+
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <AlertCircle className="h-12 w-12 text-yellow-500 mb-4" />
+            <h3 className="font-semibold text-lg mb-2">Configuration Not Set</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              No configuration found in your ENS text records.
+            </p>
+            <div className="text-xs text-slate-600 bg-slate-50 p-4 rounded-lg border border-slate-200 max-w-md">
+              <p className="font-semibold mb-2">Set your configuration:</p>
+              <p className="text-left mb-2">Add a text record to <strong>{ensName}</strong>:</p>
+              <div className="bg-white p-2 rounded border border-slate-300 mb-2">
+                <p><strong>Key:</strong> <code className="text-xs">org.setu.ai_params</code></p>
+              </div>
+              <div className="bg-white p-2 rounded border border-slate-300">
+                <p><strong>Value:</strong></p>
+                <pre className="text-xs text-left mt-1 overflow-x-auto">
+{`{
+  "threshold": 1000,
+  "strategy": "yield_max",
+  "relay_fee": 0.005
+}`}
+                </pre>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-white border-slate-200">
@@ -97,15 +214,9 @@ export function ENSConfigResolver({ ensName = 'setu-vault.eth' }: ENSConfigResol
           {!isError && !parseError ? (
             <CheckCircle2 className="h-4 w-4 text-green-500" />
           ) : (
-            <AlertCircle className="h-4 w-4 text-yellow-500" />
+            <AlertCircle className="h-4 w-4 text-red-500" />
           )}
         </div>
-
-        {!configData && !isLoading && (
-          <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">
-            Demo Mode: Using Mock Configuration
-          </Badge>
-        )}
 
         {parseError && (
           <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">

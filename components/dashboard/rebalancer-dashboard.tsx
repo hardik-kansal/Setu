@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { StatsOverview, RebalanceActionCard } from '@/components/dashboard/rebalancer-stats';
 import { RebalanceHistory } from '@/components/dashboard/rebalance-history';
 import { UserProfile } from '@/components/dashboard/user-profile';
@@ -12,39 +10,21 @@ import { SetuAgentReasoningFeed } from '@/components/dashboard/eliza-reasoning-f
 import { ENSConfigResolver } from '@/components/dashboard/ens-config-resolver';
 import { rebalancerAgent } from '@/lib/rebalancer-agent';
 import { getRecentAIReasoningLogs, getRebalanceHistory, type AIReasoningLog, type RebalanceAction } from '@/lib/supabase';
-import { useAccount, useWalletClient, useEnsName } from 'wagmi';
+import { useAccount, useWalletClient } from 'wagmi';
 import { ethers } from 'ethers';
-import { RefreshCw, Loader2, Settings } from 'lucide-react';
+import { RefreshCw, Loader2 } from 'lucide-react';
 import type { Route } from '@lifi/sdk';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
-import { mainnet } from 'wagmi/chains';
 
 export function RebalancerDashboard() {
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
   
-  // Fetch ENS name for connected address
-  const { data: userEnsName } = useEnsName({
-    address: address,
-    chainId: mainnet.id,
-  });
-  
   const [latestReasoning, setLatestReasoning] = useState<AIReasoningLog | null>(null);
   const [rebalanceHistory, setRebalanceHistory] = useState<RebalanceAction[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
-  const [ensName, setEnsName] = useState('sleepinghoodie.eth');
-  const [tempEnsName, setTempEnsName] = useState('sleepinghoodie.eth');
-  const [showSettings, setShowSettings] = useState(false);
-
-  // Update ENS name when user's ENS is fetched
-  useEffect(() => {
-    if (userEnsName) {
-      setEnsName(userEnsName);
-      setTempEnsName(userEnsName);
-    }
-  }, [userEnsName]);
 
   // Load data on mount
   useEffect(() => {
@@ -174,97 +154,24 @@ export function RebalancerDashboard() {
             AI-Powered Cross-Chain Liquidity Management
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowSettings(!showSettings)}
-            className="border-indigo-300 text-indigo-600"
-          >
-            <Settings className="h-4 w-4 mr-2" />
-            Configure ENS
-          </Button>
-          <Button
-            onClick={runAnalysis}
-            disabled={isAnalyzing}
-            size="lg"
-          >
-            {isAnalyzing ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing...
-              </>
-            ) : (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Run AI Analysis
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
-
-      {/* ENS Configuration Card */}
-      {showSettings && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          className="max-w-md"
+        <Button
+          onClick={runAnalysis}
+          disabled={isAnalyzing}
+          size="lg"
         >
-          <Card className="bg-white border-slate-200">
-            <CardContent className="pt-6 space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="ens-name">ENS Name (on Sepolia)</Label>
-                <Input
-                  id="ens-name"
-                  value={tempEnsName}
-                  onChange={(e) => setTempEnsName(e.target.value)}
-                  placeholder="your-name.eth"
-                  className="bg-white border-slate-300"
-                />
-                <p className="text-xs text-muted-foreground">
-                  {userEnsName 
-                    ? `Your ENS: ${userEnsName} • Configure AI parameters on Sepolia` 
-                    : 'This ENS name will be used to fetch AI configuration from Sepolia'}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => {
-                    setEnsName(tempEnsName);
-                    setShowSettings(false);
-                    toast.success('ENS name updated');
-                  }}
-                  className="flex-1 bg-indigo-600 hover:bg-indigo-700"
-                >
-                  Apply
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setTempEnsName(ensName);
-                    setShowSettings(false);
-                  }}
-                  className="border-slate-300"
-                >
-                  Cancel
-                </Button>
-              </div>
-              {userEnsName && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setTempEnsName(userEnsName)}
-                  className="w-full text-xs"
-                >
-                  Use My ENS: {userEnsName}
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
+          {isAnalyzing ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Analyzing...
+            </>
+          ) : (
+            <>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Run AI Analysis
+            </>
+          )}
+        </Button>
+      </div>
 
       {/* User Profile, Setu-Agent Feed, and ENS Config */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -274,7 +181,7 @@ export function RebalancerDashboard() {
           className="space-y-6"
         >
           <UserProfile />
-          <ENSConfigResolver ensName={ensName} />
+          <ENSConfigResolver />
         </motion.div>
 
         <motion.div
