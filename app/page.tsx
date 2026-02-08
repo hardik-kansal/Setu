@@ -6,8 +6,9 @@ import { Header } from "@/components/dashboard/header";
 import { BridgeTab } from "@/components/dashboard/bridge-tab";
 import { YieldTab } from "@/components/dashboard/yield-tab";
 import { SystemStatus } from "@/components/dashboard/system-status";
+import { RebalancerDashboard } from "@/components/dashboard/rebalancer-dashboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowRightLeft, TrendingUp } from "lucide-react";
+import { ArrowRightLeft, TrendingUp, Bot } from "lucide-react";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("bridge");
@@ -37,7 +38,7 @@ export default function Home() {
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <TabsList className="glass mb-6 inline-flex h-12 w-full max-w-md p-1 bg-muted/50 border border-indigo-500/20">
+              <TabsList className="glass mb-6 inline-flex h-12 w-full max-w-2xl p-1 bg-muted/50 border border-indigo-500/20">
                 <TabsTrigger
                   value="bridge"
                   className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg px-6"
@@ -52,6 +53,13 @@ export default function Home() {
                   <TrendingUp className="mr-2 h-4 w-4" />
                   Yield
                 </TabsTrigger>
+                <TabsTrigger
+                  value="rebalancer"
+                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg px-6"
+                >
+                  <Bot className="mr-2 h-4 w-4" />
+                  AI Rebalancer
+                </TabsTrigger>
               </TabsList>
 
               <AnimatePresence mode="wait">
@@ -61,20 +69,25 @@ export default function Home() {
                 <TabsContent value="yield" className="mt-0">
                   <YieldTab />
                 </TabsContent>
+                <TabsContent value="rebalancer" className="mt-0">
+                  <RebalancerDashboard />
+                </TabsContent>
               </AnimatePresence>
             </Tabs>
           </div>
 
-          <aside className="w-full lg:w-[340px] shrink-0">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-              className="lg:sticky lg:top-24"
-            >
-              <SystemStatus />
-            </motion.div>
-          </aside>
+          {activeTab !== "rebalancer" && (
+            <aside className="w-full lg:w-[340px] shrink-0">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="lg:sticky lg:top-24"
+              >
+                <SystemStatus />
+              </motion.div>
+            </aside>
+          )}
         </div>
       </main>
     </div>
