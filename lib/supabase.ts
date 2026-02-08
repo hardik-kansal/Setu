@@ -76,6 +76,23 @@ export interface AIReasoningLog {
   };
 }
 
+export interface LPUnlock {
+  id: string;
+  lp_address: string;
+  unlock_timestamp: string;
+  amount_chain_a: number;
+  amount_chain_b: number;
+  is_processed: boolean;
+}
+
+export interface UnlockVolume24h {
+  total_volume: number;
+  chain_a_volume: number;
+  chain_b_volume: number;
+  unlock_count: number;
+  unlocks: LPUnlock[];
+}
+
 // Helper functions for database operations
 export async function insertBridgeEvent(event: Omit<BridgeEvent, 'id'>) {
   const { data, error } = await supabase
@@ -177,4 +194,32 @@ export async function getRebalanceHistory(limit: number = 20): Promise<Rebalance
   
   if (error) throw error;
   return data || [];
+}
+
+export async function get24hUnlockVolume(): Promise<UnlockVolume24h> {
+  const now = new Date();
+  const twentyFourHoursFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  
+  const { data, error } = await supabase
+    .from('lp_unlocks')
+    .select('*')
+    .gte('unlock_timestamp', now.toISOString())
+    .lte('unlock_timestamp', twentyFourHoursFromNow.toISOString())
+    .eq('is_processed', false)
+    .order('unlock_timestamp', { ascending: true });
+  
+  if (error) throw error;
+  
+  const unlocks = data || [];
+  
+  const chain_a_volume = unlocks.reduce((sum, unlock) => sum + (unlock.amount_chain_a || 0), 0);
+  const chain_b_volume = unlocks.reduce((sum, unlock) => sum + (unlock.amount_chain_b || 0), 0);
+  
+  return {
+    total_volume: chain_a_volume + chain_b_volume,
+    chain_a_volume,
+    chain_b_volume,
+    unlock_count: unlocks.length,
+    unlocks
+  };
 }

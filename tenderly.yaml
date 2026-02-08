@@ -1,5 +1,5 @@
 actions:
-  sleeping_hoodie/project:
+  sleeping_hoodie/project: # project_id/slug
     runtime: v1
     sources: actions
     specs:
