@@ -53,10 +53,10 @@ export function ENSConfigResolver({ ensName = 'setu-vault.eth' }: ENSConfigResol
 
   const getStrategyColor = (strategy: string) => {
     switch (strategy) {
-      case 'yield_max': return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50';
-      case 'cost_min': return 'bg-blue-500/20 text-blue-400 border-blue-500/50';
-      case 'balanced': return 'bg-purple-500/20 text-purple-400 border-purple-500/50';
-      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/50';
+      case 'yield_max': return 'bg-emerald-50 text-emerald-700 border-emerald-300';
+      case 'cost_min': return 'bg-blue-50 text-blue-700 border-blue-300';
+      case 'balanced': return 'bg-purple-50 text-purple-700 border-purple-300';
+      default: return 'bg-slate-50 text-slate-700 border-slate-300';
     }
   };
 
@@ -70,11 +70,11 @@ export function ENSConfigResolver({ ensName = 'setu-vault.eth' }: ENSConfigResol
   };
 
   return (
-    <Card className="bg-gradient-to-br from-indigo-950/50 to-purple-950/50 border-indigo-500/30">
+    <Card className="bg-white border-slate-200">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Settings className="h-5 w-5 text-indigo-400" />
+            <Settings className="h-5 w-5 text-indigo-600" />
             <span>Decentralized Settings</span>
           </div>
           <Button
@@ -91,24 +91,24 @@ export function ENSConfigResolver({ ensName = 'setu-vault.eth' }: ENSConfigResol
       <CardContent className="space-y-4">
         <div className="flex items-center gap-2 text-sm">
           <span className="text-muted-foreground">ENS Name:</span>
-          <code className="text-indigo-400 font-mono bg-black/30 px-2 py-1 rounded">
+          <code className="text-indigo-600 font-mono bg-slate-100 px-2 py-1 rounded border border-slate-200">
             {ensName}
           </code>
           {!isError && !parseError ? (
-            <CheckCircle2 className="h-4 w-4 text-green-400" />
+            <CheckCircle2 className="h-4 w-4 text-green-500" />
           ) : (
-            <AlertCircle className="h-4 w-4 text-yellow-400" />
+            <AlertCircle className="h-4 w-4 text-yellow-500" />
           )}
         </div>
 
         {!configData && !isLoading && (
-          <Badge variant="outline" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50">
+          <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">
             Demo Mode: Using Mock Configuration
           </Badge>
         )}
 
         {parseError && (
-          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+          <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
             {parseError}
           </div>
         )}
@@ -120,14 +120,14 @@ export function ENSConfigResolver({ ensName = 'setu-vault.eth' }: ENSConfigResol
             className="space-y-4"
           >
             {/* Threshold */}
-            <div className="p-4 rounded-lg bg-black/30 border border-indigo-500/30">
+            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Rebalance Threshold</span>
-                <Badge variant="outline" className="font-mono">
+                <span className="text-sm text-slate-600">Rebalance Threshold</span>
+                <Badge variant="outline" className="font-mono bg-white">
                   ${parsedConfig.threshold.toLocaleString()}
                 </Badge>
               </div>
-              <div className="h-2 bg-black/50 rounded-full overflow-hidden">
+              <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: '100%' }}
@@ -141,9 +141,9 @@ export function ENSConfigResolver({ ensName = 'setu-vault.eth' }: ENSConfigResol
             </div>
 
             {/* Strategy */}
-            <div className="p-4 rounded-lg bg-black/30 border border-indigo-500/30">
+            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Active Strategy</span>
+                <span className="text-sm text-slate-600">Active Strategy</span>
                 <Badge className={getStrategyColor(parsedConfig.strategy)}>
                   {parsedConfig.strategy.replace('_', ' ').toUpperCase()}
                 </Badge>
@@ -154,10 +154,10 @@ export function ENSConfigResolver({ ensName = 'setu-vault.eth' }: ENSConfigResol
             </div>
 
             {/* Relay Fee */}
-            <div className="p-4 rounded-lg bg-black/30 border border-indigo-500/30">
+            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Relay Fee</span>
-                <Badge variant="outline" className="font-mono">
+                <span className="text-sm text-slate-600">Relay Fee</span>
+                <Badge variant="outline" className="font-mono bg-white">
                   {(parsedConfig.relay_fee * 100).toFixed(2)}%
                 </Badge>
               </div>
@@ -168,8 +168,8 @@ export function ENSConfigResolver({ ensName = 'setu-vault.eth' }: ENSConfigResol
           </motion.div>
         )}
 
-        <div className="pt-2 border-t border-indigo-500/30">
-          <p className="text-xs text-muted-foreground">
+        <div className="pt-2 border-t border-slate-200">
+          <p className="text-xs text-slate-600">
             ⚡ Configuration stored on-chain via ENS • Updates apply instantly without redeployment
           </p>
         </div>

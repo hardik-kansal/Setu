@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { StatsOverview, RebalanceActionCard } from '@/components/dashboard/rebalancer-stats';
 import { RebalanceHistory } from '@/components/dashboard/rebalance-history';
 import { UserProfile } from '@/components/dashboard/user-profile';
-import { ElizaReasoningFeed } from '@/components/dashboard/eliza-reasoning-feed';
+import { SetuAgentReasoningFeed } from '@/components/dashboard/eliza-reasoning-feed';
 import { ENSConfigResolver } from '@/components/dashboard/ens-config-resolver';
 import { rebalancerAgent } from '@/lib/rebalancer-agent';
 import { getRecentAIReasoningLogs, getRebalanceHistory, type AIReasoningLog, type RebalanceAction } from '@/lib/supabase';
@@ -169,7 +169,7 @@ export function RebalancerDashboard() {
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold">🤖 AI Rebalancer</h1>
+          <h1 className="text-4xl font-bold text-slate-900">🤖 AI Rebalancer</h1>
           <p className="text-muted-foreground mt-2">
             AI-Powered Cross-Chain Liquidity Management
           </p>
@@ -179,7 +179,7 @@ export function RebalancerDashboard() {
             variant="outline"
             size="sm"
             onClick={() => setShowSettings(!showSettings)}
-            className="border-indigo-500/30 text-indigo-400"
+            className="border-indigo-300 text-indigo-600"
           >
             <Settings className="h-4 w-4 mr-2" />
             Configure ENS
@@ -212,7 +212,7 @@ export function RebalancerDashboard() {
           exit={{ opacity: 0, height: 0 }}
           className="max-w-md"
         >
-          <Card className="bg-slate-900/50 border-indigo-500/30">
+          <Card className="bg-white border-slate-200">
             <CardContent className="pt-6 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="ens-name">ENS Name (on Sepolia)</Label>
@@ -221,7 +221,7 @@ export function RebalancerDashboard() {
                   value={tempEnsName}
                   onChange={(e) => setTempEnsName(e.target.value)}
                   placeholder="your-name.eth"
-                  className="bg-black/50 border-indigo-500/30"
+                  className="bg-white border-slate-300"
                 />
                 <p className="text-xs text-muted-foreground">
                   {userEnsName 
@@ -246,7 +246,7 @@ export function RebalancerDashboard() {
                     setTempEnsName(ensName);
                     setShowSettings(false);
                   }}
-                  className="border-indigo-500/30"
+                  className="border-slate-300"
                 >
                   Cancel
                 </Button>
@@ -266,7 +266,7 @@ export function RebalancerDashboard() {
         </motion.div>
       )}
 
-      {/* User Profile, Eliza Feed, and ENS Config */}
+      {/* User Profile, Setu-Agent Feed, and ENS Config */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -282,7 +282,7 @@ export function RebalancerDashboard() {
           animate={{ opacity: 1, y: 0 }}
           className="lg:col-span-2"
         >
-          <ElizaReasoningFeed ensName={ensName} />
+          <SetuAgentReasoningFeed />
         </motion.div>
       </div>
 
@@ -295,7 +295,7 @@ export function RebalancerDashboard() {
             executing={isExecuting}
           />
         ) : (
-          <Card>
+          <Card className="bg-white border-slate-200">
             <CardHeader>
               <CardTitle>💡 No Action Required</CardTitle>
             </CardHeader>
@@ -307,7 +307,7 @@ export function RebalancerDashboard() {
           </Card>
         )}
 
-        <RebalanceHistory history={rebalanceHistory} />
+        <RebalanceHistory />
       </div>
     </div>
   );
