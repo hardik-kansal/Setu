@@ -149,7 +149,7 @@ export function BridgeTab() {
                   </SelectTrigger>
                   <SelectContent>
                     {CHAINS.map((c) => (
-                      <SelectItem key={c.id} value={String(c.id)}>
+                      <SelectItem key={`from-chain-${c.id}`} value={String(c.id)}>
                         {c.name}
                       </SelectItem>
                     ))}
@@ -180,7 +180,7 @@ export function BridgeTab() {
                   </SelectTrigger>
                   <SelectContent>
                     {TOKENS.map((t) => (
-                      <SelectItem key={t.id} value={t.id}>
+                      <SelectItem key={`from-${t.id}`} value={t.id}>
                         <span className="flex items-center gap-2">
                           <CircleDollarSign className="h-4 w-4" />
                           {t.symbol} · {fromChainName}
@@ -219,7 +219,7 @@ export function BridgeTab() {
                   </SelectTrigger>
                   <SelectContent>
                     {CHAINS.map((c) => (
-                      <SelectItem key={c.id} value={String(c.id)}>
+                      <SelectItem key={`to-chain-${c.id}`} value={String(c.id)}>
                         {c.name}
                       </SelectItem>
                     ))}
@@ -248,7 +248,7 @@ export function BridgeTab() {
                   </SelectTrigger>
                   <SelectContent>
                     {TOKENS.map((t) => (
-                      <SelectItem key={t.id} value={t.id}>
+                      <SelectItem key={`to-${t.id}`} value={t.id}>
                         <span className="flex items-center gap-2">
                           <CircleDollarSign className="h-4 w-4" />
                           {t.symbol} · {toChainName}

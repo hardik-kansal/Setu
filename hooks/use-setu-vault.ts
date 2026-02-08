@@ -10,6 +10,20 @@ import {
   USDC_DECIMALS,
 } from "@/lib/contracts";
 
+// Add ERC20 approve ABI
+const ERC20_APPROVE_ABI = [
+  {
+    inputs: [
+      { name: "spender", type: "address" },
+      { name: "amount", type: "uint256" }
+    ],
+    name: "approve",
+    outputs: [{ name: "", type: "bool" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+] as const;
+
 export function useSetuVaultAddress() {
   const chainId = useChainId();
   return (SETU_VAULT_ADDRESSES as Record<number, `0x${string}`>)[chainId];
@@ -70,7 +84,7 @@ export function useGetTimeLeft() {
   const { data, refetch } = useReadContract({
     address: vaultAddress,
     abi: SETU_VAULT_ABI,
-    functionName: "getTimeLeft",
+    functionName: "getTimeUntilUnlock",
     args: address ? [address] : undefined,
   });
 
@@ -84,7 +98,7 @@ export function useCanWithdraw() {
   const { data, refetch } = useReadContract({
     address: vaultAddress,
     abi: SETU_VAULT_ABI,
-    functionName: "canWithdraw",
+    functionName: "isWithdrawReady",
     args: address ? [address] : undefined,
   });
 
@@ -92,17 +106,33 @@ export function useCanWithdraw() {
 }
 
 export function useBridge() {
+  const chainId = useChainId();
   const vaultAddress = useSetuVaultAddress();
+  const usdcAddress = USDC_ADDRESSES[chainId];
   const { writeContractAsync, isPending, error } = useWriteContract();
 
   const bridge = async (amount: string) => {
     if (!vaultAddress) throw new Error("Unsupported network. Switch to Base Sepolia or Ethereum Sepolia.");
+    if (!usdcAddress) throw new Error("USDC address not found for this network.");
+    
     const amountWei = parseUnits(amount, USDC_DECIMALS);
+    
+    // Step 1: Approve USDC spending
+    await writeContractAsync({
+      address: usdcAddress,
+      abi: ERC20_APPROVE_ABI,
+      functionName: "approve",
+      args: [vaultAddress, amountWei],
+      gas: 100000n,
+    });
+    
+    // Step 2: Bridge tokens
     return writeContractAsync({
       address: vaultAddress,
       abi: SETU_VAULT_ABI,
       functionName: "bridge",
       args: [amountWei],
+      gas: 500000n,
     });
   };
 
@@ -110,17 +140,33 @@ export function useBridge() {
 }
 
 export function useDepositLP() {
+  const chainId = useChainId();
   const vaultAddress = useSetuVaultAddress();
+  const usdcAddress = USDC_ADDRESSES[chainId];
   const { writeContractAsync, isPending, error } = useWriteContract();
 
   const depositLP = async (amount: string, days: number) => {
     if (!vaultAddress) throw new Error("Unsupported network. Switch to Base Sepolia or Ethereum Sepolia.");
+    if (!usdcAddress) throw new Error("USDC address not found for this network.");
+    
     const amountWei = parseUnits(amount, USDC_DECIMALS);
+    
+    // Step 1: Approve USDC spending
+    await writeContractAsync({
+      address: usdcAddress,
+      abi: ERC20_APPROVE_ABI,
+      functionName: "approve",
+      args: [vaultAddress, amountWei],
+      gas: 100000n,
+    });
+    
+    // Step 2: Deposit LP
     return writeContractAsync({
       address: vaultAddress,
       abi: SETU_VAULT_ABI,
       functionName: "depositLP",
       args: [amountWei, BigInt(days)],
+      gas: 500000n,
     });
   };
 
@@ -137,6 +183,7 @@ export function useWithdrawLP() {
       address: vaultAddress,
       abi: SETU_VAULT_ABI,
       functionName: "withdrawLP",
+      gas: 300000n,
     });
   };
 
