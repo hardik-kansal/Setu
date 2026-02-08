@@ -8,6 +8,16 @@
 
 In the video demonstration, the MetaMask window was not captured by the recording software due to time constraints before submission, but the system was fully operational.
 
+
+---
+
+## 📚 Documentation
+
+- **[Setup Guide](SETUP_GUIDE.md)** - Get started in 5 minutes
+- **[Tech Stack](TECH_STACK.md)** - Technologies and tools used
+- **[Rebalancing Math](REBALANCING_MATH.md)** - Mathematical model explained with code link
+
+
 ---
 
 ## 📜 Deployed Contracts
@@ -125,14 +135,6 @@ The rebalancing algorithm follows these steps:
 - Implement predictive analytics for proactive rebalancing before liquidity crises occur
 - Expand Setu to support more chains (Arbitrum, Optimism, Polygon, etc.)
 - Add support for more asset types and yield strategies
-
----
-
-## 📚 Additional Documentation
-
-- **[Setup Guide](SETUP_GUIDE.md)** - Get started in 5 minutes
-- **[Tech Stack](TECH_STACK.md)** - Technologies and tools used
-- **[Rebalancing Math](REBALANCING_MATH.md)** - Mathematical model explained
 
 
 ---
