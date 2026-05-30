@@ -1,11 +1,12 @@
-# Hack Money 2026 - Project Setu
+# Hack Money 2026 - Project Setu 
 
 **AI-Powered Cross-Chain Liquidity Rebalancer with Zero Slippage**
+
+[Project Submission link](https://ethglobal.com/showcase/setu-2akfr)
 
 ---
 
 ## 📝 Note
-
 In the video demonstration, the MetaMask window was not captured by the recording software due to time constraints before submission, but the system was fully operational.
 
 
